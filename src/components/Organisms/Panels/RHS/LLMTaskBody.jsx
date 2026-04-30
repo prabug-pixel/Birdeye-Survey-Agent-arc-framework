@@ -10,8 +10,10 @@ import styles from './LLMTaskBody.module.css';
 
 const LLM_MODEL_OPTIONS = [
   { value: 'Fast', label: 'Fast' },
+  { value: 'Balanced', label: 'Balanced' },
   { value: 'Standard', label: 'Standard' },
   { value: 'Advanced', label: 'Advanced' },
+  { value: 'Thinking', label: 'Thinking' },
 ];
 
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);

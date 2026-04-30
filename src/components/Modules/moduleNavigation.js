@@ -249,7 +249,7 @@ export const MODULE_NAV = {
   surveys: {
     title: 'Surveys AI',
     ctaLabel: 'Create survey',
-    defaultItemId: 'survey-follow-up-agents',
+    defaultItemId: 'survey-response-agents',
     menuItems: expandedSections([
       {
         label: 'Actions',
@@ -261,7 +261,7 @@ export const MODULE_NAV = {
       },
       {
         label: 'Agents',
-        children: ['Survey follow-up agents', 'Survey insights agents'],
+        children: ['Survey follow-up agents', 'Survey response agents', 'Survey insights agents'],
       },
     ]),
   },

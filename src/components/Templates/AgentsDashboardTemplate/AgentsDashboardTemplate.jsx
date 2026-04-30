@@ -96,6 +96,10 @@ const EMPTY_STATE_COPY = {
     title: 'Create your first survey follow-up agent',
     description: 'Automatically follow up with survey respondents based on their answers',
   },
+  'Survey response agents': {
+    title: 'Create your first survey response agent',
+    description: 'Automatically analyze survey responses and generate personalized, on-brand replies that acknowledge feedback and reduce churn',
+  },
   'Survey insights agents': {
     title: 'Create your first insights agent',
     description: 'Automatically surface key insights and patterns from survey responses',

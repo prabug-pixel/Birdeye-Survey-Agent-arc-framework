@@ -73,9 +73,10 @@ export function createViewChip(name, onDelete) {
 export function deserializeInto(el, value, onDelete) {
   el.innerHTML = '';
   if (!value) return;
-  const parts = value.split(/({{[^}]+}})/);
+  // Match {{var}} (serialized chips) first, then {var} (inline template tokens)
+  const parts = value.split(/({{[^}]+}}|{[^{}]+})/);
   parts.forEach((part) => {
-    const m = part.match(/^{{(.+)}}$/);
+    const m = part.match(/^{{(.+)}}$/) || part.match(/^{([^{}]+)}$/);
     if (m) {
       el.appendChild(createViewChip(m[1], onDelete));
     } else {

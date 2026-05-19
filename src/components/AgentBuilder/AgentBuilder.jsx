@@ -98,6 +98,51 @@ function makeNodeConfig(id, type, label, description) {
   };
 }
 
+function deriveNodeTitle(details) {
+  if (!details) return undefined;
+  return (
+    details.triggerName ||
+    details.taskName ||
+    details.nodeName ||
+    details.name ||
+    details.branchName ||
+    undefined
+  );
+}
+
+function deriveNodeData(itemData, details) {
+  const derivedTitle = deriveNodeTitle(details);
+  const derivedSubtitle = details?.description;
+  return {
+    ...itemData,
+    title: derivedTitle || itemData?.title,
+    subtitle: derivedSubtitle || itemData?.subtitle,
+  };
+}
+
+const NODE_BASE_HEIGHT = 132;
+const NODE_LINE_HEIGHT = 18;
+const NODE_CHARS_PER_LINE = 56;
+const NODE_GAP = 110;
+const NODE_MIN_SPACING = 250;
+
+function estimateDescriptionLines(text) {
+  if (!text) return 1;
+  return String(text).split('\n').reduce((sum, line) => {
+    return sum + Math.max(1, Math.ceil(line.length / NODE_CHARS_PER_LINE));
+  }, 0);
+}
+
+function nodeSpacing(itemData, details) {
+  if (itemData?.flowType === 'branch' || itemData?.subtype === 'Schedule-based') {
+    return NODE_MIN_SPACING;
+  }
+  const description = details?.description || itemData?.subtitle || '';
+  const lines = estimateDescriptionLines(description);
+  const height = NODE_BASE_HEIGHT + lines * NODE_LINE_HEIGHT;
+  return Math.max(NODE_MIN_SPACING, height + NODE_GAP);
+}
+
 function buildFlow(nodeList, startData, nodeDetails = {}) {
   let y = 0;
   const nodes = [];
@@ -131,7 +176,7 @@ function buildFlow(nodeList, startData, nodeDetails = {}) {
               title: nodeDetails[nodeId]?.triggerName ?? item.data.title,
               subtitle: nodeDetails[nodeId]?.description ?? item.data.subtitle,
             }
-          : { ...item.data },
+          : deriveNodeData(item.data, nodeDetails[nodeId]),
     });
     edges.push({
       id: `e-${prevId}-${nodeId}`,
@@ -146,11 +191,10 @@ function buildFlow(nodeList, startData, nodeDetails = {}) {
       const startX = -((branches.length - 1) * spacing) / 2;
       const branchChipY = y + 150;
       const branchNodeStartY = y + 260;
-      let maxBranchNodes = 0;
+      let maxBranchEndY = branchNodeStartY;
       branches.forEach((branch, bi) => {
         const branchX = startX + bi * spacing;
         const branchNodes = nodeDetails[branch.id]?.nodes || [];
-        maxBranchNodes = Math.max(maxBranchNodes, branchNodes.length);
         nodes.push({
           id: branch.id,
           type: 'branchPath',
@@ -165,12 +209,14 @@ function buildFlow(nodeList, startData, nodeDetails = {}) {
         });
 
         let previousId = branch.id;
-        branchNodes.forEach((childNode, childIndex) => {
+        let childY = branchNodeStartY;
+        branchNodes.forEach((childNode) => {
+          const childData = deriveNodeData(childNode.data, nodeDetails[childNode.id]);
           nodes.push({
             id: childNode.id,
             type: childNode.flowType,
-            position: { x: branchX, y: branchNodeStartY + childIndex * 250 },
-            data: { ...childNode.data, stepNumber: childNode.data?.stepNumber ?? null },
+            position: { x: branchX, y: childY },
+            data: { ...childData, stepNumber: childNode.data?.stepNumber ?? null },
           });
           edges.push({
             id: `e-${previousId}-${childNode.id}`,
@@ -183,15 +229,17 @@ function buildFlow(nodeList, startData, nodeDetails = {}) {
             },
           });
           previousId = childNode.id;
+          childY += nodeSpacing({ flowType: childNode.flowType, subtype: childNode.data?.subtype, subtitle: childNode.data?.subtitle }, nodeDetails[childNode.id]);
         });
 
         const branchEndId = `${branch.id}-end`;
         nodes.push({
           id: branchEndId,
           type: 'branchEnd',
-          position: { x: branchX, y: branchNodeStartY + branchNodes.length * 250 },
+          position: { x: branchX, y: childY },
           data: { parentId: branch.id },
         });
+        maxBranchEndY = Math.max(maxBranchEndY, childY);
         edges.push({
           id: `e-${previousId}-${branchEndId}`,
           source: previousId,
@@ -204,10 +252,10 @@ function buildFlow(nodeList, startData, nodeDetails = {}) {
           },
         });
       });
-      y += 150 + (maxBranchNodes + 1) * 250;
+      y = maxBranchEndY + 140;
     }
 
-    y += 250;
+    y += nodeSpacing({ flowType: item.flowType, subtype: item.data?.subtype, subtitle: item.data?.subtitle }, nodeDetails[nodeId]);
   });
 
   const lastId = nodeList.length > 0 ? nodeList[nodeList.length - 1].id : START_NODE_ID;
@@ -368,7 +416,7 @@ export default function AgentBuilder({
   /* ─── Always-fresh ref so publish never reads stale closure values ─── */
   const latestRef = useRef({});
   useEffect(() => {
-    latestRef.current = { agentId, agentName, agentDesc, moduleContext, sectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, moduleSlug: agentModuleSlug, agentSlug };
+    latestRef.current = { agentId, agentName, agentDesc, moduleContext: agentModuleSlug || moduleContext, sectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, moduleSlug: agentModuleSlug, agentSlug };
   }, [agentId, agentName, agentDesc, moduleContext, sectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, agentModuleSlug, agentSlug]);
 
   /* ─── Auto-save to Firestore (debounced 1.5 s) ─── */

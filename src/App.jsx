@@ -110,8 +110,8 @@ const CUSTOM_NAV_ITEMS = [
 
 function App() {
   const navigate = useNavigate();
-  const [currentModule, setCurrentModule] = useState('reviews');
-  const [activeL2Item, setActiveL2Item] = useState(() => getModuleNav('reviews').defaultItemId);
+  const [currentModule, setCurrentModule] = useState('surveys');
+  const [activeL2Item, setActiveL2Item] = useState(() => getModuleNav('surveys').defaultItemId);
   const [agents, setAgents] = useState([]);
   const [savedTemplates, setSavedTemplates] = useState([]);
   const [toastVisible, setToastVisible] = useState(false);
@@ -183,21 +183,22 @@ function App() {
 
   /* ─── Agent builder open / close ─── */
   async function handleCreateAgent(template) {
+    const resolved = template || moduleTemplates.find((t) => t.sectionContext === activeL2Item) || moduleTemplates[0] || null;
     const newId = crypto.randomUUID();
     const moduleSlug = currentModule;
-    const agentSlug = toSlug(template?.title || 'agent') + '-' + Date.now().toString(36);
+    const agentSlug = toSlug(resolved?.title || 'agent') + '-' + Date.now().toString(36);
     await saveAgent(newId, {
       id: newId,
-      name: template?.title || '',
+      name: resolved?.title || '',
       moduleSlug,
       agentSlug,
       moduleContext: currentModule,
       sectionContext: activeL2Item,
       status: 'Draft',
-      nodes: template?.nodes || null,
-      nodeDetails: template?.nodeDetails || null,
-      templateId: template?.id,
-      templateSource: template?.source,
+      nodes: resolved?.nodes || null,
+      nodeDetails: resolved?.nodeDetails || null,
+      templateId: resolved?.id,
+      templateSource: resolved?.source,
     });
     navigate(`/${moduleSlug}/agents/${agentSlug}`);
   }

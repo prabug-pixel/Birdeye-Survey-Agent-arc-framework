@@ -165,7 +165,6 @@ function App() {
         .filter((a) => {
           if (a.moduleContext !== currentModule) return false;
           if (activeL2Item === 'view-all-agents') return true;
-          if (!a.sectionContext) return true;
           return a.sectionContext === activeL2Item;
         })
         .map(toDashboardAgent),

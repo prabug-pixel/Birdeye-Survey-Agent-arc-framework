@@ -307,6 +307,7 @@ export default function AgentBuilder({
   const [agentId, setAgentId] = useState(() => propAgentId || crypto.randomUUID());
   const [agentModuleSlug, setAgentModuleSlug] = useState(urlModuleSlug || moduleContext);
   const [agentSlug, setAgentSlug] = useState(urlAgentSlug || '');
+  const [agentSectionContext, setAgentSectionContext] = useState(sectionContext || '');
   const [derivedAppTitle, setDerivedAppTitle] = useState(appTitle || getModuleNav(moduleContext).title);
 
   /* ─── Loading / not-found state for URL-based loading ─── */
@@ -344,6 +345,7 @@ export default function AgentBuilder({
       setAgentId(agent.id);
       setAgentModuleSlug(agent.moduleSlug || urlModuleSlug);
       setAgentSlug(agent.agentSlug || urlAgentSlug);
+      setAgentSectionContext(agent.sectionContext || '');
       setNavId(agent.moduleContext || urlModuleSlug);
       setDerivedAppTitle(getModuleNav(agent.moduleContext || urlModuleSlug).title);
       setNodeList(agent.nodes || []);
@@ -417,8 +419,8 @@ export default function AgentBuilder({
   /* ─── Always-fresh ref so publish never reads stale closure values ─── */
   const latestRef = useRef({});
   useEffect(() => {
-    latestRef.current = { agentId, agentName, agentDesc, moduleContext: agentModuleSlug || moduleContext, sectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, moduleSlug: agentModuleSlug, agentSlug };
-  }, [agentId, agentName, agentDesc, moduleContext, sectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, agentModuleSlug, agentSlug]);
+    latestRef.current = { agentId, agentName, agentDesc, moduleContext: agentModuleSlug || moduleContext, sectionContext: agentSectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, moduleSlug: agentModuleSlug, agentSlug };
+  }, [agentId, agentName, agentDesc, moduleContext, agentSectionContext, agentStatus, nodeList, nodeDetails, templateId, templateSource, agentModuleSlug, agentSlug]);
 
   /* ─── Auto-save to Firestore (debounced 1.5 s) ─── */
   const saveTimerRef = useRef(null);
@@ -430,7 +432,7 @@ export default function AgentBuilder({
       saveAgent(id, { id, name, description: desc, status, moduleContext: mod, sectionContext: sec, moduleSlug: msSlug, agentSlug: asSlug, nodes, nodeDetails: details });
     }, 1500);
     return () => clearTimeout(saveTimerRef.current);
-  }, [agentName, nodeList, nodeDetails, agentId, moduleContext, sectionContext, agentStatus, isTemplateMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [agentName, nodeList, nodeDetails, agentId, moduleContext, agentSectionContext, agentStatus, isTemplateMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const buildTemplatePayload = useCallback(() => {
     const { agentName: name, agentDesc: desc, moduleContext: mod, sectionContext: sec, nodeList: nodes, nodeDetails: details, templateSource: source } = latestRef.current;
@@ -518,7 +520,7 @@ export default function AgentBuilder({
       description: agentDesc,
       status: agentStatus,
       moduleContext: agentModuleSlug || moduleContext,
-      sectionContext,
+      sectionContext: agentSectionContext,
       moduleSlug: agentModuleSlug,
       agentSlug,
       templateId: templateId || null,
@@ -535,7 +537,7 @@ export default function AgentBuilder({
     a.download = `${(agentName || 'agent').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.agent.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [agentId, agentName, agentDesc, agentStatus, agentModuleSlug, moduleContext, sectionContext, agentSlug, templateId, templateSource, nodeList, nodeDetails]);
+  }, [agentId, agentName, agentDesc, agentStatus, agentModuleSlug, moduleContext, agentSectionContext, agentSlug, templateId, templateSource, nodeList, nodeDetails]);
 
   /* ─── Live node sync: RHS → canvas ─── */
   const handleNodeFieldChange = useCallback((nodeId, field, value) => {

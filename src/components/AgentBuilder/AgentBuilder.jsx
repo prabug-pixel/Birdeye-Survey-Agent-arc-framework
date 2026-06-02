@@ -312,7 +312,7 @@ export default function AgentBuilder({
   /* ─── Loading / not-found state for URL-based loading ─── */
   const [isLoadingFromSlug, setIsLoadingFromSlug] = useState(!viewOnly && !!urlAgentSlug && !!urlModuleSlug);
   const [agentNotFound, setAgentNotFound] = useState(false);
-  const [navId, setNavId] = useState(activeNavId);
+  const [navId, setNavId] = useState(urlModuleSlug || activeNavId);
   const [nodeList, setNodeList] = useState(() => initialNodes || []);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -344,6 +344,7 @@ export default function AgentBuilder({
       setAgentId(agent.id);
       setAgentModuleSlug(agent.moduleSlug || urlModuleSlug);
       setAgentSlug(agent.agentSlug || urlAgentSlug);
+      setNavId(agent.moduleContext || urlModuleSlug);
       setDerivedAppTitle(getModuleNav(agent.moduleContext || urlModuleSlug).title);
       setNodeList(agent.nodes || []);
       setNodeDetails(() => {
@@ -507,24 +508,34 @@ export default function AgentBuilder({
     onSaveAgent?.(true, agentPayload);
   }, [buildAgentPayload, buildTemplatePayload, onSaveAgent, onSaveTemplate]);
 
-  /* ─── Download handler ─── */
+  /* ─── Download handler — exports a full agent snapshot that can be
+       re-imported via the agents list (Import button) or seeded into a
+       deployment. Shape matches what saveAgent() writes to Firestore. ─── */
   const handleExport = useCallback(() => {
     const payload = {
+      id: agentId,
       name: agentName,
       description: agentDesc,
-      moduleContext,
-      exportedAt: new Date().toISOString(),
+      status: agentStatus,
+      moduleContext: agentModuleSlug || moduleContext,
+      sectionContext,
+      moduleSlug: agentModuleSlug,
+      agentSlug,
+      templateId: templateId || null,
+      templateSource: templateSource || null,
       nodes: nodeList,
       nodeDetails,
+      exportedAt: new Date().toISOString(),
+      schemaVersion: 1,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${agentName.replace(/\s+/g, '-').toLowerCase() || 'agent'}.json`;
+    a.download = `${(agentName || 'agent').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.agent.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [agentName, agentDesc, moduleContext, nodeList, nodeDetails]);
+  }, [agentId, agentName, agentDesc, agentStatus, agentModuleSlug, moduleContext, sectionContext, agentSlug, templateId, templateSource, nodeList, nodeDetails]);
 
   /* ─── Live node sync: RHS → canvas ─── */
   const handleNodeFieldChange = useCallback((nodeId, field, value) => {

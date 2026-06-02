@@ -18,6 +18,7 @@ const CHIP_TYPE_MAP = {
   link:       { chipMod: 'prompt-chip--link',       swatchMod: 'prompt-chip-swatch--link',       iconHtml: '<span class="material-symbols-outlined prompt-chip-mat-icon">link</span>' },
   address:    { chipMod: 'prompt-chip--address',    swatchMod: 'prompt-chip-swatch--address',    iconHtml: '<span class="material-symbols-outlined prompt-chip-mat-icon">home</span>' },
   product:    { chipMod: 'prompt-chip--product',    swatchMod: 'prompt-chip-swatch--product',    iconHtml: '<span class="material-symbols-outlined prompt-chip-mat-icon">deployed_code</span>' },
+  tool:       { chipMod: 'prompt-chip--tool',       swatchMod: 'prompt-chip-swatch--tool',       iconHtml: '<span class="material-symbols-outlined prompt-chip-mat-icon">build</span>' },
 };
 
 export function serializeFrom(el) {
@@ -136,4 +137,25 @@ export function insertChipAt(el, range, onFinalize, type = 'variable') {
     el.appendChild(chip);
   }
   input.focus();
+}
+
+export function insertNamedChipAt(el, range, onChange, name, type = 'variable') {
+  if (!el || !name) return;
+  const chip = document.createElement('span');
+  chip.contentEditable = 'false';
+  buildViewChipContents(chip, name, onChange, type);
+
+  if (range && el.contains(range.commonAncestorContainer)) {
+    range.deleteContents();
+    range.insertNode(chip);
+    const newRange = document.createRange();
+    newRange.setStartAfter(chip);
+    newRange.collapse(true);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  } else {
+    el.appendChild(chip);
+  }
+  onChange?.();
 }

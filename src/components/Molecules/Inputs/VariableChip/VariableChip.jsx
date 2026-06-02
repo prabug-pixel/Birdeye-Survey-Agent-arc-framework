@@ -26,15 +26,26 @@ export const CHIP_TYPES = [
   { type: 'product', label: 'Industry', icon: 'deployed_code' },
 ];
 
+// All renderable swatch icons by type. Includes types that don't appear in the
+// user-facing picker (e.g. 'tool', which is inserted via ToolSelectionDrawer).
+const SWATCH_ICON_BY_TYPE = {
+  variable: null,
+  attachment: 'attach_file',
+  link: 'link',
+  address: 'home',
+  product: 'deployed_code',
+  tool: 'build',
+};
+
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function SwatchIcon({ type }) {
   if (!type || type === 'variable') return <DataTypeIcon />;
-  const info = CHIP_TYPES.find((ct) => ct.type === type);
-  if (!info?.icon) return <DataTypeIcon />;
+  const icon = SWATCH_ICON_BY_TYPE[type];
+  if (!icon) return <DataTypeIcon />;
   return (
     <span className={`material-symbols-outlined ${styles[`icon${cap(type)}`] || ''}`}>
-      {info.icon}
+      {icon}
     </span>
   );
 }

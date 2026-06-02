@@ -84,11 +84,13 @@
 .prompt-chip--link       { border-color: #f48fb1; }
 .prompt-chip--address    { border-color: #9fa8da; }
 .prompt-chip--product    { border-color: #ffe082; }
+.prompt-chip--tool       { border-color: #ccc; }
 
 .prompt-chip-swatch--attachment { background: #e8f5e9; border-right-color: #c8e6c9; }
 .prompt-chip-swatch--link       { background: #fce4ec; border-right-color: #f48fb1; }
 .prompt-chip-swatch--address    { background: #e8eaf6; border-right-color: #9fa8da; }
 .prompt-chip-swatch--product    { background: #fff8e1; border-right-color: #ffe082; }
+.prompt-chip-swatch--tool       { background: #efefef; border-right-color: #ccc; }
 
 /* Material icon inside swatch */
 .prompt-chip-mat-icon {
@@ -104,3 +106,4 @@
 .prompt-chip-swatch--link       .prompt-chip-mat-icon { color: #c2185b; }
 .prompt-chip-swatch--address    .prompt-chip-mat-icon { color: #3949ab; }
 .prompt-chip-swatch--product    .prompt-chip-mat-icon { color: #f57f17; }
+.prompt-chip-swatch--tool       .prompt-chip-mat-icon { color: #555; }

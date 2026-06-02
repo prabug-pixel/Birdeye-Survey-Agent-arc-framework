@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import '../prompt-chip.css';
-import { serializeFrom, deserializeInto, insertChipAt } from '../promptChipHelpers.js';
+import { serializeFrom, deserializeInto, insertChipAt, insertNamedChipAt } from '../promptChipHelpers.js';
 import { VariableIcon, BuildIcon, ExpandIcon } from '../PromptToolbarIcons.jsx';
 import { CHIP_TYPES, DataTypeIcon } from '../VariableChip/VariableChip.jsx';
+import ToolSelectionDrawer from '../../../Organisms/Drawers/ToolSelectionDrawer/ToolSelectionDrawer.jsx';
 import styles from './UserPromptInput.module.css';
 
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -16,6 +17,7 @@ export default function UserPromptInput({ value, onChange, required }) {
   const savedRangeRef = useRef(null);
   const pickerContainerRef = useRef(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [toolDrawerOpen, setToolDrawerOpen] = useState(false);
 
   const emitChange = useCallback(() => {
     const s = serializeFrom(editorRef.current);
@@ -60,6 +62,23 @@ export default function UserPromptInput({ value, onChange, required }) {
     savedRangeRef.current = null;
   }, [emitChange]);
 
+  const handleOpenToolDrawer = useCallback(() => {
+    const el = editorRef.current;
+    if (el) {
+      const sel = window.getSelection();
+      if (sel?.rangeCount > 0 && el.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+        savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+      }
+    }
+    setToolDrawerOpen(true);
+  }, []);
+
+  const handleToolSelect = useCallback((tool) => {
+    setToolDrawerOpen(false);
+    insertNamedChipAt(editorRef.current, savedRangeRef.current, emitChange, tool?.name, 'tool');
+    savedRangeRef.current = null;
+  }, [emitChange]);
+
   return (
     <div className={styles.wrap}>
       <div className={styles.labelRow}>
@@ -87,8 +106,9 @@ export default function UserPromptInput({ value, onChange, required }) {
           </button>
           <button
             type="button"
-            className={styles.toolbarBtn}
+            className={`${styles.toolbarBtn} ${toolDrawerOpen ? styles.toolbarBtnActive : ''}`}
             onMouseDown={(e) => e.preventDefault()}
+            onClick={handleOpenToolDrawer}
             title="Tools"
           >
             <BuildIcon />
@@ -124,6 +144,11 @@ export default function UserPromptInput({ value, onChange, required }) {
           )}
         </div>
       </div>
+      <ToolSelectionDrawer
+        isOpen={toolDrawerOpen}
+        onClose={() => setToolDrawerOpen(false)}
+        onToolSelect={handleToolSelect}
+      />
     </div>
   );
 }

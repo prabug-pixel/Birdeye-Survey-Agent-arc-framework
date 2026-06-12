@@ -4,6 +4,7 @@ import TextArea from '@birdeye/elemental/core/atoms/TextArea/index.js';
 import CustomToolBuilder from '../../Drawers/CustomToolBuilder/CustomToolBuilder.jsx';
 import CustomToolViewer from '../../Drawers/CustomToolViewer/CustomToolViewer.jsx';
 import ResponseHandlerDrawer from '../../Drawers/ResponseHandlerDrawer/ResponseHandlerDrawer.jsx';
+import ToolSelectionDrawer from '../../Drawers/ToolSelectionDrawer/ToolSelectionDrawer.jsx';
 import styles from './EntityTaskBody.module.css';
 
 export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
@@ -18,6 +19,9 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
 
   const [isResponseHandlerOpen, setIsResponseHandlerOpen] = useState(false);
   const [responseHandlerTool, setResponseHandlerTool] = useState(null);
+
+  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
+  const [swapTargetIdx, setSwapTargetIdx] = useState(null);
 
   const [customTools, setCustomTools] = useState(initialValues.customTools ?? []);
 
@@ -98,12 +102,21 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
     setEditingTool(null);
   };
 
-  const handleDeleteTool = (id) => {
+  const openSwap = (idx) => {
+    setSwapTargetIdx(idx);
+    setIsToolSelectorOpen(true);
+  };
+
+  const handleSwapSelect = (selectedTool) => {
     setCustomTools((prev) => {
-      const next = prev.filter((t) => t.id !== id);
+      const next = prev.map((t, i) =>
+        i === swapTargetIdx ? { ...t, name: selectedTool.name, toolId: selectedTool.id, desc: selectedTool.desc } : t
+      );
       onFieldChange?.('customTools', next);
       return next;
     });
+    setIsToolSelectorOpen(false);
+    setSwapTargetIdx(null);
   };
 
   return (
@@ -113,6 +126,7 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
           name="taskName"
           type="text"
           label="Task name"
+          capitalizeLabel="no"
           placeholder="Enter name"
           value={taskName}
           onChange={handleTaskName}
@@ -141,7 +155,7 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
               </button>
             )}
 
-            {customTools.map((tool) => (
+            {customTools.map((tool, i) => (
               <div key={tool.id} className={styles.toolRow}>
                 <button
                   className={styles.toolRowMain}
@@ -166,11 +180,11 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
                     <span className={`material-symbols-outlined ${styles.iconBtnIcon}`}>edit</span>
                   </button>
                   <button
-                    className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
-                    onClick={() => handleDeleteTool(tool.id)}
-                    title="Delete tool"
+                    className={styles.iconBtn}
+                    onClick={() => openSwap(i)}
+                    title="Swap tool"
                   >
-                    <span className={`material-symbols-outlined ${styles.iconBtnIcon}`}>delete</span>
+                    <span className={`material-symbols-outlined ${styles.iconBtnIcon}`}>swap_horiz</span>
                   </button>
                 </div>
               </div>
@@ -198,6 +212,12 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
         tool={responseHandlerTool}
         onClose={() => { setIsResponseHandlerOpen(false); setResponseHandlerTool(null); }}
         onSave={handleResponseHandlerSave}
+      />
+
+      <ToolSelectionDrawer
+        isOpen={isToolSelectorOpen}
+        onClose={() => { setIsToolSelectorOpen(false); setSwapTargetIdx(null); }}
+        onToolSelect={handleSwapSelect}
       />
     </>
   );

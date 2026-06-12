@@ -11,6 +11,10 @@
   font-family: 'Roboto', sans-serif;
 }
 
+.outer :global(.ctb__header) {
+  border-bottom: none;
+}
+
 .outer :global(.ctb__header-title) {
   font-weight: 400;
 }
@@ -71,26 +75,25 @@
   min-width: 4px;
 }
 
-/* {x} button pinned inside editor at bottom-left */
+/* Variable icon button pinned inside editor at bottom-left */
 .varBtnInner {
   position: absolute;
-  bottom: 8px;
-  left: 10px;
+  bottom: 4px;
+  left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   background: none;
-  border: 1px solid #d0d5dd;
+  border: none;
   border-radius: 4px;
-  padding: 2px 7px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  color: #555;
+  padding: 0;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
-  line-height: 18px;
 }
 
 .varBtnInner:hover {
-  background: #f4f6f7;
-  border-color: #b0b8c4;
+  background: #f2f4f7;
 }
 
 /* ── Variable tag chip (matches VariableChip / DataType style) ── */
@@ -124,25 +127,7 @@
   color: #555;
   font-family: 'Roboto', sans-serif;
   white-space: nowrap;
-  padding: 0 4px 0 6px;
-}
-
-.varTagDelete {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 24px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  flex-shrink: 0;
-  color: #666;
-}
-
-.varTagDelete:hover {
-  background: #f4f6f7;
+  padding: 0 8px;
 }
 
 /* ── Labels ── */

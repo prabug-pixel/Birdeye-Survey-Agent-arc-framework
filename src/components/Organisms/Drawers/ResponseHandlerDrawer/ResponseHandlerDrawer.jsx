@@ -3,6 +3,7 @@ import CommonSideDrawer from '@birdeye/elemental/core/atoms/CommonSideDrawer/ind
 import Button from '@birdeye/elemental/core/atoms/Button/index.js';
 import VariableSelectionModal from '../../Modals/VariableSelectionModal/VariableSelectionModal';
 import { DataTypeIcon } from '../../../Molecules/Inputs/VariableChip/VariableChip';
+import { VariableIcon } from '../../../Molecules/Inputs/PromptToolbarIcons.jsx';
 import styles from './ResponseHandlerDrawer.module.css';
 
 let _uid = 0;
@@ -45,21 +46,13 @@ const TextSeg = memo(function TextSeg({ segId, initialText, spanRefs, onFocus, o
   );
 });
 
-function VarTag({ value, onDelete }) {
+function VarTag({ value }) {
   return (
     <span className={styles.varTag}>
       <span className={styles.varTagSwatch}>
         <DataTypeIcon />
       </span>
       <span className={styles.varTagLabel}>{value}</span>
-      <button
-        type="button"
-        className={styles.varTagDelete}
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={onDelete}
-      >
-        <span className="material-symbols-outlined" style={{ fontSize: 14, fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>close</span>
-      </button>
     </span>
   );
 }
@@ -213,7 +206,7 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
               <div className={styles.richContent}>
                 {segments.map((seg, i) =>
                   seg.type === 'variable' ? (
-                    <VarTag key={seg.id} value={seg.value} onDelete={() => removeVariable(i)} />
+                    <VarTag key={seg.id} value={seg.value} />
                   ) : (
                     <TextSeg
                       key={seg.id}
@@ -231,7 +224,7 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
                 onClick={() => setShowVarModal((v) => !v)}
                 title="Insert variable"
               >
-                {'{x}'}
+                <VariableIcon />
               </button>
             </div>
             {showVarModal && (

@@ -165,7 +165,7 @@
 .variable-selection-modal__panels {
   display: flex;
   gap: 10px;
-  height: 156px;
+  height: 200px;
   overflow: hidden;
 }
 

@@ -72,7 +72,6 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
 
   const activeSegIdxRef = useRef(0);
   const spanRefs = useRef({});
-  const varBtnRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && tool) {
@@ -177,12 +176,11 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
     },
   }), [segments, removeVariable]);
 
-  const varBtnRect = varBtnRef.current?.getBoundingClientRect();
-  const dropdownStyle = varBtnRect ? {
+  const dropdownStyle = {
     position: 'fixed',
-    top: varBtnRect.bottom + 4,
-    left: varBtnRect.left,
-  } : undefined;
+    top: 80,
+    right: 660,
+  };
 
   return (
     <CommonSideDrawer
@@ -228,7 +226,6 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
                 )}
               </div>
               <button
-                ref={varBtnRef}
                 type="button"
                 className={styles.varBtnInner}
                 onClick={() => setShowVarModal((v) => !v)}

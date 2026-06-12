@@ -70,17 +70,13 @@ export default function VariableSelectionModal({
   isOpen,
   onClose,
   onVariableSelect,
-  nodes = DEFAULT_NODES,
-  variables = DEFAULT_VARIABLES,
   systemNodes = DEFAULT_SYSTEM_NODES,
   systemVariablesByNode = DEFAULT_SYSTEM_VARIABLES_BY_NODE,
   title = 'Fields',
   dropdown = false,
   dropdownStyle,
 }) {
-  const [activeTab, setActiveTab] = useState('system');
-  const [activeNodeId, setActiveNodeId] = useState(nodes[0]?.id ?? null);
-  const [activeSystemNodeId, setActiveSystemNodeId] = useState(systemNodes[0]?.id ?? null);
+  const [activeNodeId, setActiveNodeId] = useState(systemNodes[0]?.id ?? null);
   const [search, setSearch] = useState('');
 
   if (!isOpen) return null;
@@ -89,16 +85,7 @@ export default function VariableSelectionModal({
     if (e.target === e.currentTarget) onClose();
   };
 
-  const isSystemTab = activeTab === 'system';
-
-  const activeLeftNodes = isSystemTab ? systemNodes : nodes;
-  const activeLeftNodeId = isSystemTab ? activeSystemNodeId : activeNodeId;
-  const setActiveLeftNodeId = isSystemTab ? setActiveSystemNodeId : setActiveNodeId;
-
-  const currentVariables = isSystemTab
-    ? (systemVariablesByNode[activeSystemNodeId] ?? [])
-    : variables;
-
+  const currentVariables = systemVariablesByNode[activeNodeId] ?? [];
   const filteredVariables = currentVariables.filter((v) =>
     v.toLowerCase().includes(search.toLowerCase())
   );
@@ -108,69 +95,53 @@ export default function VariableSelectionModal({
       className="variable-selection-modal__dialog"
       style={dropdown ? { zIndex: 1000, ...dropdownStyle } : undefined}
     >
-        <div className="variable-selection-modal__header">
-          <p className="variable-selection-modal__title">{title}</p>
-          <button className="variable-selection-modal__close" onClick={onClose} aria-label="Close">
-            <span className="material-symbols-outlined">close</span>
-          </button>
+      <div className="variable-selection-modal__header">
+        <p className="variable-selection-modal__title">{title}</p>
+        <button className="variable-selection-modal__close" onClick={onClose} aria-label="Close">
+          <span className="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div className="variable-selection-modal__body">
+        <div className="variable-selection-modal__search">
+          <span className="material-symbols-outlined variable-selection-modal__search-icon">search</span>
+          <input
+            className="variable-selection-modal__search-input"
+            type="text"
+            placeholder="Search fields"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
-        <div className="variable-selection-modal__body">
-          <div className="variable-selection-modal__tabs">
-            {['system', 'local'].map((tab) => (
+        <div className="variable-selection-modal__panels">
+          <div className="variable-selection-modal__node-list">
+            {systemNodes.map((node) => (
               <button
-                key={tab}
-                className={`variable-selection-modal__tab${activeTab === tab ? ' variable-selection-modal__tab--active' : ''}`}
-                onClick={() => setActiveTab(tab)}
+                key={node.id}
+                className={`variable-selection-modal__node${activeNodeId === node.id ? ' variable-selection-modal__node--active' : ''}`}
+                onClick={() => setActiveNodeId(node.id)}
               >
-                <span className="variable-selection-modal__tab-text">
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </span>
-                <span className="variable-selection-modal__tab-indicator" />
+                <span className="variable-selection-modal__node-label">{node.label}</span>
+                <span className="material-symbols-outlined variable-selection-modal__node-chevron">chevron_right</span>
               </button>
             ))}
           </div>
 
-          <div className="variable-selection-modal__search">
-            <span className="material-symbols-outlined variable-selection-modal__search-icon">search</span>
-            <input
-              className="variable-selection-modal__search-input"
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          <div className="variable-selection-modal__panels">
-            <div className="variable-selection-modal__node-list">
-              {activeLeftNodes.map((node) => (
-                <button
-                  key={node.id}
-                  className={`variable-selection-modal__node${activeLeftNodeId === node.id ? ' variable-selection-modal__node--active' : ''}`}
-                  onClick={() => setActiveLeftNodeId(node.id)}
-                >
-                  <span className="variable-selection-modal__node-label">{node.label}</span>
-                  <span className="variable-selection-modal__node-count">{node.count}</span>
-                  <span className="material-symbols-outlined variable-selection-modal__node-chevron">chevron_right</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="variable-selection-modal__variable-list">
-              {filteredVariables.map((variable, i) => (
-                <button
-                  key={variable}
-                  className="variable-selection-modal__variable-btn"
-                  onClick={() => onVariableSelect?.(variable)}
-                >
-                  <DataType type="variable" label={`${i + 1}. ${variable}`} />
-                </button>
-              ))}
-            </div>
+          <div className="variable-selection-modal__variable-list">
+            {filteredVariables.map((variable, i) => (
+              <button
+                key={variable}
+                className="variable-selection-modal__variable-btn"
+                onClick={() => onVariableSelect?.(variable)}
+              >
+                <DataType type="variable" label={variable} />
+              </button>
+            ))}
           </div>
         </div>
       </div>
+    </div>
   );
 
   if (dropdown) return createPortal(dialog, document.body);

@@ -15,7 +15,7 @@ import './AgentBuilder.css';
 const START_NODE_ID = '__start__';
 const END_NODE_ID = '__end__';
 
-function makeNodeDetails(type, label) {
+function makeNodeDetails(type, label, description) {
   if (type === 'trigger' && label === 'Schedule-based') {
     return {
       triggerName: '',
@@ -49,7 +49,7 @@ function makeNodeDetails(type, label) {
       userPrompt: '',
     };
   }
-  if (label === 'Response handler') {
+  if (label === 'Response handler' || description === 'Response handler') {
     return {
       taskName: 'Response handler',
       description: '',
@@ -94,11 +94,13 @@ function makeNodeConfig(id, type, label, description) {
     titlePlaceholder = 'Enter task name';
   }
 
+  const isResponseHandler = label === 'Response handler' || description === 'Response handler';
+
   return {
     id,
     flowType,
     data: {
-      title: '',
+      title: isResponseHandler ? 'Response handler' : '',
       headerLabel: type === 'trigger' && label === 'Schedule-based' ? 'Schedule-based trigger' : undefined,
       subtype: label,
       stepNumber: null,
@@ -732,7 +734,7 @@ export default function AgentBuilder({
   const handleDropNode = useCallback(({ type, label, description, afterNodeId, branchPathId }) => {
     const id = nextId();
     const newNode = makeNodeConfig(id, type, label, description);
-    const details = makeNodeDetails(type, label);
+    const details = makeNodeDetails(type, label, description);
 
     if (branchPathId) {
       setNodeDetails((prev) => {

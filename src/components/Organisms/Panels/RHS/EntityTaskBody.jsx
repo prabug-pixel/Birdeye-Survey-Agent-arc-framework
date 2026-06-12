@@ -3,6 +3,7 @@ import FormInput from '@birdeye/elemental/core/atoms/FormInput/index.js';
 import TextArea from '@birdeye/elemental/core/atoms/TextArea/index.js';
 import CustomToolBuilder from '../../Drawers/CustomToolBuilder/CustomToolBuilder.jsx';
 import CustomToolViewer from '../../Drawers/CustomToolViewer/CustomToolViewer.jsx';
+import ResponseHandlerDrawer from '../../Drawers/ResponseHandlerDrawer/ResponseHandlerDrawer.jsx';
 import styles from './EntityTaskBody.module.css';
 
 export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
@@ -14,6 +15,9 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
 
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [viewingTool, setViewingTool] = useState(null);
+
+  const [isResponseHandlerOpen, setIsResponseHandlerOpen] = useState(false);
+  const [responseHandlerTool, setResponseHandlerTool] = useState(null);
 
   const [customTools, setCustomTools] = useState(initialValues.customTools ?? []);
 
@@ -34,12 +38,12 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
     setIsBuilderOpen(true);
   };
 
-  const openEditDirect = (tool) => {
-    setEditingTool(tool);
-    setIsBuilderOpen(true);
-  };
-
   const openViewer = (tool) => {
+    if (tool.builtIn === 'response-handler') {
+      setResponseHandlerTool(tool);
+      setIsResponseHandlerOpen(true);
+      return;
+    }
     setViewingTool(tool);
     setIsViewerOpen(true);
   };
@@ -54,6 +58,26 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
     setViewingTool(null);
     setEditingTool(tool);
     setIsBuilderOpen(true);
+  };
+
+  const openEditDirect = (tool) => {
+    if (tool.builtIn === 'response-handler') {
+      setResponseHandlerTool(tool);
+      setIsResponseHandlerOpen(true);
+      return;
+    }
+    setEditingTool(tool);
+    setIsBuilderOpen(true);
+  };
+
+  const handleResponseHandlerSave = (updated) => {
+    setCustomTools((prev) => {
+      const next = prev.map((t) => (t.id === updated.id ? updated : t));
+      onFieldChange?.('customTools', next);
+      return next;
+    });
+    setIsResponseHandlerOpen(false);
+    setResponseHandlerTool(null);
   };
 
   const handleBuilderClose = () => {
@@ -167,6 +191,13 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
         initialTool={editingTool}
         onClose={handleBuilderClose}
         onSave={handleBuilderSave}
+      />
+
+      <ResponseHandlerDrawer
+        isOpen={isResponseHandlerOpen}
+        tool={responseHandlerTool}
+        onClose={() => { setIsResponseHandlerOpen(false); setResponseHandlerTool(null); }}
+        onSave={handleResponseHandlerSave}
       />
     </>
   );

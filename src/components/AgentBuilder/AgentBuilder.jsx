@@ -49,6 +49,21 @@ function makeNodeDetails(type, label) {
       userPrompt: '',
     };
   }
+  if (label === 'Response handler') {
+    return {
+      taskName: 'Response handler',
+      description: '',
+      customTools: [
+        {
+          id: 'response-handler-builtin',
+          name: 'Response handler',
+          builtIn: 'response-handler',
+          responseText: '',
+          responseHandling: 'direct',
+        },
+      ],
+    };
+  }
   return {
     taskName: '',
     description: '',

@@ -129,6 +129,7 @@ const TASK_SUB_ITEMS = {
       'Send a survey',
       'Follow up on survey',
       'Analyze survey results',
+      'Response handler',
     ],
   },
   'Social-task': {

@@ -15,11 +15,6 @@
   font-weight: 400;
 }
 
-.outer :global(.el-textarea-label-outside) {
-  font-size: 14px;
-  letter-spacing: 0.1px;
-}
-
 .body {
   flex: 1;
   overflow-y: auto;
@@ -35,50 +30,122 @@
   gap: 8px;
 }
 
-/* Wrap textarea + {x} button together */
-.textareaWrap {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+/* ── Rich text editor ── */
 
-.textarea {
-  width: 100%;
-  box-sizing: border-box;
+.richEditor {
+  position: relative;
   border: 1px solid #d0d5dd;
   border-radius: 6px;
-  padding: 10px 12px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  line-height: 20px;
-  color: #212121;
-  resize: vertical;
-  outline: none;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
   transition: border-color 0.15s;
 }
 
-.textarea:focus {
+.richEditor:focus-within {
   border-color: #1976d2;
 }
 
-.varBtn {
-  align-self: flex-start;
-  margin-top: 6px;
+.richContent {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 4px;
+  padding: 10px 12px 36px;
+  min-height: 80px;
+  cursor: text;
+}
+
+/* Inline contentEditable text spans */
+.textSeg {
+  display: inline;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  color: #212121;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-width: 4px;
+}
+
+/* {x} button pinned inside editor at bottom-left */
+.varBtnInner {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
   background: none;
   border: 1px solid #d0d5dd;
   border-radius: 4px;
-  padding: 3px 8px;
+  padding: 2px 7px;
   font-family: 'Roboto Mono', monospace;
   font-size: 12px;
   color: #555;
   cursor: pointer;
   transition: background 0.12s, border-color 0.12s;
+  line-height: 18px;
 }
 
-.varBtn:hover {
+.varBtnInner:hover {
   background: #f4f6f7;
   border-color: #b0b8c4;
 }
+
+/* ── Variable tag chip (matches VariableChip / DataType style) ── */
+
+.varTag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  background: #fff;
+  border: 1px solid #d1e5f9;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.varTagSwatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 24px;
+  background: #ecf5fd;
+  border-right: 1px solid #d1e5f9;
+  flex-shrink: 0;
+}
+
+.varTagLabel {
+  font-size: 12px;
+  line-height: 16px;
+  color: #555;
+  font-family: 'Roboto', sans-serif;
+  white-space: nowrap;
+  padding: 0 4px 0 6px;
+}
+
+.varTagDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 24px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: #666;
+}
+
+.varTagDelete:hover {
+  background: #f4f6f7;
+}
+
+/* ── Labels ── */
 
 .sectionLabel {
   font-size: 14px;
@@ -87,6 +154,12 @@
   line-height: 20px;
   font-family: 'Roboto', sans-serif;
 }
+
+.required {
+  color: #b42318;
+}
+
+/* ── Radio rows ── */
 
 .radioRow {
   display: flex;
@@ -120,7 +193,7 @@
 
 .radioDesc {
   font-size: 12px;
-  color: #667085;
+  color: #8f8f8f;
   font-family: 'Roboto', sans-serif;
   line-height: 18px;
 }

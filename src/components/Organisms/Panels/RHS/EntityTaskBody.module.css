@@ -4,6 +4,17 @@
   gap: 20px;
 }
 
+.formContainer :global(.label-outside)::after,
+.formContainer :global(.el-textarea-label-outside)::after {
+  content: ' *';
+  color: #de1b0c;
+  margin-left: 2px;
+}
+
+.formContainer textarea[name='description'] {
+  min-height: 118px;
+}
+
 .toolsSection {
   display: flex;
   flex-direction: column;
@@ -39,7 +50,7 @@
 .addBox {
   border: 1px solid #e5e9f0;
   border-radius: 4px;
-  padding: 12px 10px;
+  padding: 8px 10px;
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -92,14 +103,8 @@
   border: none;
   padding: 4px 4px;
   border-radius: 4px;
-  cursor: pointer;
   min-width: 0;
   text-align: left;
-  transition: background 0.12s;
-}
-
-.toolRowMain:hover {
-  background: #f2f4f7;
 }
 
 .toolIconWrap {

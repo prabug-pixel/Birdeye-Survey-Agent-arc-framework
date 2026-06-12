@@ -157,11 +157,7 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
 
             {customTools.map((tool, i) => (
               <div key={tool.id} className={styles.toolRow}>
-                <button
-                  className={styles.toolRowMain}
-                  type="button"
-                  onClick={() => openViewer(tool)}
-                >
+                <div className={styles.toolRowMain}>
                   <div className={styles.toolIconWrap}>
                     {tool.iconDataUrl ? (
                       <img src={tool.iconDataUrl} alt={tool.name} className={styles.toolIconImg} />
@@ -170,7 +166,7 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
                     )}
                   </div>
                   <span className={styles.toolName}>{tool.name}</span>
-                </button>
+                </div>
                 <div className={styles.toolActions}>
                   <button
                     className={styles.iconBtn}

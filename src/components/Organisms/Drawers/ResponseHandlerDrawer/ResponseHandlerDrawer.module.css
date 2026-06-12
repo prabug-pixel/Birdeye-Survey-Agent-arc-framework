@@ -134,9 +134,10 @@
 
 .sectionLabel {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   color: #212121;
   line-height: 20px;
+  letter-spacing: 0;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -174,6 +175,7 @@
   color: #212121;
   font-family: 'Roboto', sans-serif;
   line-height: 20px;
+  letter-spacing: 0;
 }
 
 .radioDesc {

@@ -4,6 +4,13 @@
   gap: 24px;
 }
 
+.container :global(.label-outside)::after,
+.container :global(.el-textarea-label-outside)::after {
+  content: ' *';
+  color: #de1b0c;
+  margin-left: 2px;
+}
+
 .fieldGroup {
   display: flex;
   flex-direction: column;

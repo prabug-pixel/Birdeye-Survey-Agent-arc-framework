@@ -153,6 +153,7 @@ export default function LLMTaskBody({ initialValues = {}, onFieldChange }) {
         name="taskName"
         type="text"
         label="Task name"
+        capitalizeLabel="no"
         placeholder="Enter name"
         value={taskName}
         onChange={(e) => { setTaskName(e.target.value); emit('taskName', e.target.value); }}

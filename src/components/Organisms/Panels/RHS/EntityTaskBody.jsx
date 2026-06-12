@@ -125,12 +125,12 @@ export default function EntityTaskBody({ initialValues = {}, onFieldChange }) {
           value={description}
           onChange={handleDescription}
           noFloatingLabel
+          required
         />
 
         <div className={styles.toolsSection}>
           <div className={styles.sectionLabelWrapper}>
-            <span className={styles.sectionLabelText}>Tools</span>
-            <span className={`material-symbols-outlined ${styles.sectionLabelIcon}`}>info</span>
+            <span className={styles.sectionLabelText}>Tool</span>
           </div>
 
           <div className={styles.addBox}>

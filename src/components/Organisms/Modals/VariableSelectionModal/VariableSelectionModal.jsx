@@ -20,19 +20,50 @@ const DEFAULT_VARIABLES = [
 ];
 
 const DEFAULT_SYSTEM_NODES = [
-  { id: 'business', label: 'Business', count: 20 },
-  { id: 'contacts', label: 'Contacts', count: 24 },
-  { id: 'location', label: 'Location', count: 12 },
-  { id: 'brand-voice', label: 'Brand voice', count: 20 },
-  { id: 'keywords', label: 'Keywords', count: 12 },
+  { id: 'contact', label: 'Contact', count: 8 },
+  { id: 'business', label: 'Business', count: 6 },
+  { id: 'listing', label: 'Listing profile fields', count: 5 },
+  { id: 'date', label: 'Date', count: 4 },
+  { id: 'utilities', label: 'Utilities', count: 3 },
 ];
 
 const DEFAULT_SYSTEM_VARIABLES_BY_NODE = {
-  business: ['Business.Name', 'Business.Industry', 'Business.Size', 'Business.Revenue'],
-  contacts: ['Contact.Name', 'Contact.Age', 'Contact.Collection', 'Contact.CountryHead'],
-  location: ['Location.City', 'Location.State', 'Location.Country', 'Location.ZipCode'],
-  'brand-voice': ['BrandVoice.Tone', 'BrandVoice.Style', 'BrandVoice.Keywords'],
-  keywords: ['Keywords.Primary', 'Keywords.Secondary', 'Keywords.Tags'],
+  contact: [
+    'Contact First Name',
+    'Contact Last Name',
+    'Contact Email',
+    'Contact Phone',
+    'Contact Display Name',
+    'Contact Country Code',
+    'Contact City',
+    'Contact State',
+  ],
+  business: [
+    'Business Name',
+    'Business Industry',
+    'Business Phone',
+    'Business Email',
+    'Business Website',
+    'Business Address',
+  ],
+  listing: [
+    'Listing Profile Name',
+    'Listing Profile URL',
+    'Listing Profile Rating',
+    'Listing Profile Review Count',
+    'Listing Profile Category',
+  ],
+  date: [
+    'Current Date',
+    'Current Time',
+    'Current Day',
+    'Current Month',
+  ],
+  utilities: [
+    'Agent Name',
+    'Survey Name',
+    'Response ID',
+  ],
 };
 
 export default function VariableSelectionModal({

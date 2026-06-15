@@ -252,9 +252,9 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
                 onChange={() => setResponseHandling('direct')}
               />
               <div className={styles.radioContent}>
-                <span className={styles.radioTitle}>Post directly</span>
+                <span className={styles.radioTitle}>Sent directly</span>
                 <span className={styles.radioDesc}>
-                  Responses are posted directly. For non-integrated sites, responses will show as suggestions only.
+                  Response will be sent directly to the user
                 </span>
               </div>
             </label>
@@ -269,9 +269,9 @@ export default function ResponseHandlerDrawer({ isOpen, tool, onClose, onSave })
                 onChange={() => setResponseHandling('approval')}
               />
               <div className={styles.radioContent}>
-                <span className={styles.radioTitle}>Post after approval</span>
+                <span className={styles.radioTitle}>Sent after approval</span>
                 <span className={styles.radioDesc}>
-                  Responses requires human approval before posting
+                  Responses requires human approval before sending
                 </span>
               </div>
             </label>
